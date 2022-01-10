@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">TrendingRepositories</string>
+    <string name="app_name">Trending</string>
+    <string name="options_symbol">⋮</string>
 </resources>
