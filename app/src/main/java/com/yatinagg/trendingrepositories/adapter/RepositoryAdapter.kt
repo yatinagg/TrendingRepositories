@@ -1,5 +1,6 @@
 package com.yatinagg.trendingrepositories.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +28,9 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val repository = repositories[holder.adapterPosition]
         holder.binding.repositoriesText.text = repository.username
+        holder.binding.repositoriesText.setBackgroundColor(Color.WHITE)
         holder.binding.repositoriesDescription.text = repository.description
+        holder.binding.repositoriesDescription.setBackgroundColor(Color.WHITE)
         Picasso.get().load(repository.builtBy[0].avatar).into(holder.binding.ivAvatar)
 
         println("MainActivity 1 ${repository.url} now $repository")
@@ -40,6 +43,6 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
 class MainViewHolder(val binding: ListviewRepositoriesBinding) :
     RecyclerView.ViewHolder(binding.root) {
-        
+
 }
 
