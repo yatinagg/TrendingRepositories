@@ -1,8 +1,12 @@
 package com.yatinagg.trendingrepositories.viewmodel
 
 import android.util.Log
+import android.view.View
+import androidx.databinding.BindingAdapter
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,9 +19,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
     private val TAG = "MainViewModel"
 
+
     val repositoryList = MutableLiveData<TrendingRepositories>()
 
-    fun getTrendingRepos() {
+    fun getTrendingRepos(view: View) {
         val response = repository.getTrendingRepos()
         response.enqueue(object : Callback<TrendingRepositories> {
             override fun onResponse(
@@ -25,6 +30,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
                 response: Response<TrendingRepositories>
             ) {
                 repositoryList.postValue(response.body())
+                view.visibility = View.GONE
                 Log.d(TAG, "check${response.body()}")
             }
 
@@ -33,4 +39,5 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
             }
         })
     }
+
 }

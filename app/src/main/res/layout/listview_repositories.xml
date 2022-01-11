@@ -15,8 +15,10 @@
 
         <ImageView
             android:id="@+id/iv_avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:background="@color/background"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,16 +27,18 @@
 
             <TextView
                 android:id="@+id/repositories_text"
-                android:layout_width="match_parent"
+                android:layout_margin="5dp"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="Why"
+                android:background="@color/background"
                 android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/repositories_description"
+                android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="description"
+                android:background="@color/background"
                 android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>

@@ -48,6 +48,7 @@ dependencies {
 
     // hilt
     implementation 'com.google.dagger:hilt-android:2.40.5'
+    implementation 'androidx.databinding:databinding-runtime:7.0.4'
     kapt 'com.google.dagger:hilt-compiler:2.40.5'
 
     // For instrumentation tests
@@ -60,6 +61,9 @@ dependencies {
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //Shimmer
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
 
     implementation 'androidx.fragment:fragment-ktx:1.4.0'
     testImplementation 'junit:junit:4.+'

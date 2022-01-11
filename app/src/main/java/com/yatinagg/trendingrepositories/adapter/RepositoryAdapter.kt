@@ -29,6 +29,7 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
         holder.binding.repositoriesText.text = repository.username
         holder.binding.repositoriesDescription.text = repository.description
         Picasso.get().load(repository.builtBy[0].avatar).into(holder.binding.ivAvatar)
+
         println("MainActivity 1 ${repository.url} now $repository")
     }
 
@@ -39,5 +40,6 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
 class MainViewHolder(val binding: ListviewRepositoriesBinding) :
     RecyclerView.ViewHolder(binding.root) {
+        
 }
 
