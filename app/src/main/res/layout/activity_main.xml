@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,24 +12,32 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?actionBarSize"
+        android:layout_marginHorizontal="10dp"
         android:background="@color/white"
         tools:ignore="MissingConstraints">
-
-        <TextView
-            android:layout_width="350dp"
-            android:layout_height="match_parent"
-            android:text="@string/app_name"
-            android:textColor="@color/black"
-            android:textSize="25sp"
-            android:gravity="center"
-            android:id="@+id/toolbar_title" />
-
-        <TextView
-            android:layout_width="20dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:textColor="@color/black"
-            android:text="@string/options_symbol" />
+            android:orientation="horizontal"
+            android:weightSum="10">
+            <TextView
+                android:layout_width="350dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:text="@string/app_name"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                android:gravity="center"
+                android:id="@+id/toolbar_title" />
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textSize="25sp"
+                android:textColor="@color/black"
+                android:text="@string/options_symbol" />
+        </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView

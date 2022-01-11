@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.yatinagg.trendingrepositories.R
 import com.yatinagg.trendingrepositories.databinding.ListviewRepositoriesBinding
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.model.TrendingRepositoriesItem
+import java.lang.Exception
 
 class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
@@ -17,7 +17,7 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
     fun setRepositoriesList(repositories: TrendingRepositories) {
         this.repositories = repositories.toMutableList()
-        notifyDataSetChanged()
+        notifyItemRangeInserted(0,repositories.size)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -34,9 +34,13 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
         holder.binding.repositoriesName.text = repository.repositoryName
         holder.binding.repositoriesName.setBackgroundColor(Color.WHITE)
         holder.binding.repositoriesDescription.text = repository.description
-        holder.binding.tvRepositoriesLanguage.text = repository.language
-        if(repository.languageColor != null)
+        try {
             holder.binding.ivRepositoriesLanguage.setBackgroundColor(Color.parseColor(repository.languageColor))
+            holder.binding.tvRepositoriesLanguage.text = repository.language
+        }
+        catch (e: Exception){
+            holder.binding.tvRepositoriesLanguage.text = "None"
+        }
         holder.binding.tvRepositoriesStars.text = repository.totalStars.toString()
         holder.binding.tvRepositoriesForks.text = repository.forks.toString()
         holder.binding.cardView.setOnClickListener {
