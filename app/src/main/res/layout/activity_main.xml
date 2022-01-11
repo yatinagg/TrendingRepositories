@@ -40,6 +40,14 @@
         </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_marginTop="?actionBarSize"
@@ -49,6 +57,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:listitem="@layout/listview_repositories"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     <com.facebook.shimmer.ShimmerFrameLayout

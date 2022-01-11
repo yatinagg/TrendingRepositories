@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.yatinagg.trendingrepositories.R
 import com.yatinagg.trendingrepositories.adapter.RepositoryAdapter
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var ivError: ImageView
     private lateinit var vError: View
     private lateinit var buttonRetry: Button
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         ivError = findViewById(R.id.iv_error)
         vError = findViewById(R.id.view_error)
         buttonRetry = findViewById(R.id.button_retry)
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         // create  layoutManager
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         // pass it to rvLists layoutManager
@@ -54,27 +57,33 @@ class MainActivity : AppCompatActivity() {
         })
         getTrendingRepos()
         updateUIWithResponse()
+        // retry button listener
         buttonRetry.setOnClickListener {
             binding.recyclerView.layoutManager = LinearLayoutManager(this)
             binding.recyclerView.itemAnimator = null
             getTrendingRepos()
         }
+        // swipe refresh listener
+        swipeRefreshLayout.setOnRefreshListener(refreshListener)
     }
 
     private fun updateUIWithResponse(){
         viewModel.responseSuccessful.observe(this, Observer {
             when(it){
                 "success" -> {
+                    binding.recyclerView.visibility = View.VISIBLE
                     mShimmerFrameLayout.visibility = View.GONE
                     ivError.visibility = View.GONE
                     vError.visibility = View.GONE
                     buttonRetry.visibility = View.GONE
+                    swipeRefreshLayout.isRefreshing = false
                 }
                 "failure" -> {
                     mShimmerFrameLayout.visibility = View.GONE
                     ivError.visibility = View.VISIBLE
                     vError.visibility = View.VISIBLE
                     buttonRetry.visibility = View.VISIBLE
+                    swipeRefreshLayout.isRefreshing = false
                 }
                 else -> {
                     mShimmerFrameLayout.visibility = View.VISIBLE
@@ -84,6 +93,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private val refreshListener = SwipeRefreshLayout.OnRefreshListener {
+        swipeRefreshLayout.isRefreshing = true
+        // call api to reload the screen
+        binding.recyclerView.visibility = View.GONE
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.itemAnimator = null
+        getTrendingRepos()
     }
 
     private fun getTrendingRepos(){

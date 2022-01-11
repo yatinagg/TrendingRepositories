@@ -65,6 +65,9 @@ dependencies {
     //Shimmer
     implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
 
+    //SwipeRefreshLayout
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
     implementation 'androidx.fragment:fragment-ktx:1.4.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
