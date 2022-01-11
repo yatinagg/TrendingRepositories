@@ -2,6 +2,9 @@ package com.yatinagg.trendingrepositories.view
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -24,6 +27,9 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val adapter = RepositoryAdapter()
     private lateinit var mShimmerFrameLayout: ShimmerFrameLayout
+    private lateinit var ivError: ImageView
+    private lateinit var vError: View
+    private lateinit var buttonRetry: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         mShimmerFrameLayout = findViewById(R.id.shimmer_view_container)
+        ivError = findViewById(R.id.iv_error)
+        vError = findViewById(R.id.view_error)
+        buttonRetry = findViewById(R.id.button_retry)
         // create  layoutManager
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
         // pass it to rvLists layoutManager
@@ -43,10 +52,44 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, it.toString())
             Log.d(TAG, "how${adapter.repositories}")
         })
-        lifecycleScope.launch {
-            viewModel.getTrendingRepos(findViewById(R.id.shimmer_view_container))
+        getTrendingRepos()
+        updateUIWithResponse()
+        buttonRetry.setOnClickListener {
+            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+            binding.recyclerView.itemAnimator = null
+            getTrendingRepos()
         }
+    }
 
+    private fun updateUIWithResponse(){
+        viewModel.responseSuccessful.observe(this, Observer {
+            when(it){
+                "success" -> {
+                    mShimmerFrameLayout.visibility = View.GONE
+                    ivError.visibility = View.GONE
+                    vError.visibility = View.GONE
+                    buttonRetry.visibility = View.GONE
+                }
+                "failure" -> {
+                    mShimmerFrameLayout.visibility = View.GONE
+                    ivError.visibility = View.VISIBLE
+                    vError.visibility = View.VISIBLE
+                    buttonRetry.visibility = View.VISIBLE
+                }
+                else -> {
+                    mShimmerFrameLayout.visibility = View.VISIBLE
+                    ivError.visibility = View.GONE
+                    vError.visibility = View.GONE
+                    buttonRetry.visibility = View.GONE
+                }
+            }
+        })
+    }
+
+    private fun getTrendingRepos(){
+        lifecycleScope.launch {
+            viewModel.getTrendingRepos()
+        }
     }
 
     override fun onResume() {
