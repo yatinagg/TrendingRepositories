@@ -75,7 +75,7 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/circular"/>
+                    android:background="@color/black"/>
                 <TextView
                     android:id="@+id/tv_repositories_language"
                     android:layout_width="match_parent"

@@ -35,7 +35,8 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
         holder.binding.repositoriesName.setBackgroundColor(Color.WHITE)
         holder.binding.repositoriesDescription.text = repository.description
         holder.binding.tvRepositoriesLanguage.text = repository.language
-        holder.binding.ivRepositoriesLanguage.setBackgroundColor(Color.parseColor(repository.languageColor))
+        if(repository.languageColor != null)
+            holder.binding.ivRepositoriesLanguage.setBackgroundColor(Color.parseColor(repository.languageColor))
         holder.binding.tvRepositoriesStars.text = repository.totalStars.toString()
         holder.binding.tvRepositoriesForks.text = repository.forks.toString()
         holder.binding.cardView.setOnClickListener {
