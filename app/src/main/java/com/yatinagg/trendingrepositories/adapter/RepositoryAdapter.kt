@@ -3,6 +3,7 @@ package com.yatinagg.trendingrepositories.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.yatinagg.trendingrepositories.databinding.ListviewRepositoriesBinding
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.model.TrendingRepositoriesItem
@@ -25,8 +26,10 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val repository = repositories[holder.adapterPosition]
-        holder.binding.repositoriesText.text = repository.toString()
-        println("MainActivity 1$repository")
+        holder.binding.repositoriesText.text = repository.username
+        holder.binding.repositoriesDescription.text = repository.description
+        Picasso.get().load(repository.builtBy[0].avatar).into(holder.binding.ivAvatar)
+        println("MainActivity 1 ${repository.url} now $repository")
     }
 
     override fun getItemCount(): Int {
@@ -37,3 +40,4 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 class MainViewHolder(val binding: ListviewRepositoriesBinding) :
     RecyclerView.ViewHolder(binding.root) {
 }
+

@@ -25,7 +25,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
                 response: Response<TrendingRepositories>
             ) {
                 repositoryList.postValue(response.body())
-                Log.d(TAG, "check${response.body().toString()}")
+                Log.d(TAG, "check${response.body()}")
             }
 
             override fun onFailure(call: Call<TrendingRepositories>, t: Throwable) {
