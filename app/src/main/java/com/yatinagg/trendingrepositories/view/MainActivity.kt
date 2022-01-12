@@ -3,11 +3,11 @@ package com.yatinagg.trendingrepositories.view
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity"
+    private val tag = "MainActivity"
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
     private val adapter = RepositoryAdapter()
@@ -34,10 +34,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Obtain the FirebaseAnalytics instance.
         super.onCreate(savedInstanceState)
         setSupportActionBar(findViewById(R.id.toolbar))
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+//
+//        val crashButton = Button(this)
+//        crashButton.text = "Test Crash"
+//        crashButton.setOnClickListener {
+//            throw RuntimeException("Test Crash") // Force a crash
+//        }
+//
+//        addContentView(crashButton, ViewGroup.LayoutParams(
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.WRAP_CONTENT))
+
         mShimmerFrameLayout = findViewById(R.id.shimmer_view_container)
         ivError = findViewById(R.id.iv_error)
         vError = findViewById(R.id.view_error)
@@ -50,10 +62,10 @@ class MainActivity : AppCompatActivity() {
         // initialize the adapter,
         // and pass the required argument
         binding.recyclerView.adapter = adapter
-        viewModel.repositoryList.observe(this, Observer {
+        viewModel.repositoryList.observe(this, {
             adapter.setRepositoriesList(it)
-            Log.d(TAG, it.toString())
-            Log.d(TAG, "how${adapter.repositories}")
+            Log.d(tag, it.toString())
+            Log.d(tag, "how${adapter.repositories}")
         })
         getTrendingRepos()
         updateUIWithResponse()
@@ -68,7 +80,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUIWithResponse(){
-        viewModel.responseSuccessful.observe(this, Observer {
+        viewModel.responseSuccessful.observe(this, {
             when(it){
                 "success" -> {
                     binding.recyclerView.visibility = View.VISIBLE
