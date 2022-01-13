@@ -29,38 +29,57 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
     override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
         val repository = repositories[holder.adapterPosition]
-        holder.binding.repositoriesText.text = repository.username
-        holder.binding.repositoriesText.setBackgroundColor(Color.WHITE)
-        holder.binding.repositoriesName.text = repository.repositoryName
-        holder.binding.repositoriesName.setBackgroundColor(Color.WHITE)
-        holder.binding.repositoriesDescription.text = repository.description
-        try {
-            holder.binding.ivRepositoriesLanguage.setBackgroundColor(Color.parseColor(repository.languageColor))
-            holder.binding.tvRepositoriesLanguage.text = repository.language
-        }
-        catch (e: Exception){
-            holder.binding.tvRepositoriesLanguage.text = "None"
-        }
-        holder.binding.tvRepositoriesStars.text = repository.totalStars.toString()
-        holder.binding.tvRepositoriesForks.text = repository.forks.toString()
-        holder.binding.cardView.setOnClickListener {
-            if(holder.binding.expandableLayout.visibility == View.GONE)
-                holder.binding.expandableLayout.visibility = View.VISIBLE
-            else
-                holder.binding.expandableLayout.visibility = View.GONE
-        }
-        Picasso.get().load(repository.builtBy[0].avatar).into(holder.binding.ivAvatar)
+        println("MainActivity 1 ${repository.username == null}   ${repository.username} now")
 
-        println("MainActivity 1 ${repository.url} now $repository")
+        if(repository.username == null){
+            holder.setIsRecyclable(false)
+            holder.binding.cardView.setCardBackgroundColor(Color.parseColor(repository.languageColor))
+            holder.binding.repositoriesText.setBackgroundColor(Color.parseColor(repository.languageColor))
+            holder.binding.repositoriesText.setTextColor(Color.parseColor("#FFFFFF"))
+            val layoutParams = holder.binding.cardView.layoutParams
+            layoutParams.height = 100
+            holder.binding.ivAvatar.visibility = View.GONE
+            holder.binding.repositoriesText.text = repository.language
+            return
+        }
+        else {
+            holder.binding.repositoriesText.text = repository.username
+            holder.binding.repositoriesText.setBackgroundColor(Color.WHITE)
+            holder.binding.repositoriesName.text = repository.repositoryName
+            holder.binding.repositoriesName.setBackgroundColor(Color.WHITE)
+            holder.binding.repositoriesDescription.text = repository.description
+            try {
+                holder.binding.ivRepositoriesLanguage.setBackgroundColor(Color.parseColor(repository.languageColor))
+                holder.binding.tvRepositoriesLanguage.text = repository.language
+            } catch (e: Exception) {
+                holder.binding.tvRepositoriesLanguage.text = "None"
+            }
+            holder.binding.tvRepositoriesStars.text = repository.totalStars.toString()
+            holder.binding.tvRepositoriesForks.text = repository.forks.toString()
+            holder.binding.cardView.setOnClickListener {
+                if (holder.binding.expandableLayout.visibility == View.GONE)
+                    holder.binding.expandableLayout.visibility = View.VISIBLE
+                else
+                    holder.binding.expandableLayout.visibility = View.GONE
+            }
+            Picasso.get().load(repository.builtBy?.get(0)?.avatar).into(holder.binding.ivAvatar)
+        }
     }
 
     override fun getItemCount(): Int {
         return repositories.size
     }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
+    }
 }
 
 class MainViewHolder(val binding: ListviewRepositoriesBinding) :
     RecyclerView.ViewHolder(binding.root) {
-
 }
 

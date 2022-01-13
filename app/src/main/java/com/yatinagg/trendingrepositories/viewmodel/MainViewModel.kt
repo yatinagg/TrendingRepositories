@@ -1,13 +1,9 @@
 package com.yatinagg.trendingrepositories.viewmodel
 
 import android.util.Log
-import android.view.View
-import androidx.databinding.BindingAdapter
-import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
+import com.yatinagg.trendingrepositories.model.TrendingRepositoriesItem
 import com.yatinagg.trendingrepositories.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +18,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val repository: MainRepository) : ViewModel() {
     private val TAG = "MainViewModel"
 
-
-    val repositoryList = MutableLiveData<TrendingRepositories>()
+    val repositoryList = MutableLiveData<TrendingRepositories?>()
     val responseSuccessful = MutableLiveData<String>()
+    var repositoryMapList = HashMap<String,TrendingRepositories?>()
+    val repositoryListHeader = MutableLiveData<TrendingRepositories?>()
 
     suspend fun getTrendingRepos() {
         responseSuccessful.postValue("loading")
@@ -36,9 +33,47 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
                         call: Call<TrendingRepositories>,
                         response: Response<TrendingRepositories>
                     ) {
+                        repositoryList.postValue(null)
+                        repositoryMapList = HashMap()
                         repositoryList.postValue(response.body())
                         responseSuccessful.postValue("success")
+                        response.body()?.forEach {
+                            Log.d(TAG, "check1234${it.language} $it")
+                            if(repositoryMapList != null && !(repositoryMapList!!.containsKey(it.language))){
+                                val repositoryMapList1: HashMap<String,TrendingRepositories?> = repositoryMapList
+                                repositoryMapList1!![it.language.toString()] = TrendingRepositories()
+                                repositoryMapList1!![it.language]?.add(it)
+                                repositoryMapList = repositoryMapList1!!
+                            } else if(repositoryMapList != null){
+                                val repositoryMapList1: HashMap<String,TrendingRepositories?> = repositoryMapList
+                                repositoryMapList1!![it.language]?.add(it)
+                                repositoryMapList = repositoryMapList1!!
+                            }
+                            else{
+                                val repositoryMapList1 = HashMap<String,TrendingRepositories?>()
+                                repositoryMapList1[it.language.toString()] = TrendingRepositories()
+                                repositoryMapList1[it.language]?.add(it)
+//                                Log.d(TAG, "check123${repositoryMapList1} $i")
+                                repositoryMapList = repositoryMapList1
+                            }
+                            Log.d(TAG, "check12w${repositoryMapList?.size}")
+                        }
+                        val listHeader = TrendingRepositories()
+                        for(i in repositoryMapList){
+                            Log.d(TAG, "check123$ ${i.key}${repositoryMapList[i.key]!!.size}")
+                            if(repositoryMapList[i.key] == null || repositoryMapList[i.key]!!.size == 0)
+                                continue
+                            listHeader.add(TrendingRepositoriesItem(language = i.key, languageColor = repositoryMapList[i.key]!![0].languageColor))
+                            for(j in repositoryMapList[i.key]!!){
+                                listHeader.add(j)
+                            }
+                        }
+                        repositoryList.value = null
+                        repositoryListHeader.value = listHeader
+                        Log.d(TAG, "check12${repositoryMapList}")
+                        Log.d(TAG, "check123${listHeader}")
                         Log.d(TAG, "check${response.body()}")
+
                     }
 
                     override fun onFailure(call: Call<TrendingRepositories>, t: Throwable) {

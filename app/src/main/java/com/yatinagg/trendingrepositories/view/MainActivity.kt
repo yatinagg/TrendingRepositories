@@ -3,10 +3,10 @@ package com.yatinagg.trendingrepositories.view
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +16,7 @@ import com.facebook.shimmer.ShimmerFrameLayout
 import com.yatinagg.trendingrepositories.R
 import com.yatinagg.trendingrepositories.adapter.RepositoryAdapter
 import com.yatinagg.trendingrepositories.databinding.ActivityMainBinding
+import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vError: View
     private lateinit var buttonRetry: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private var currentDisplay = "Home"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +52,10 @@ class MainActivity : AppCompatActivity() {
         // initialize the adapter,
         // and pass the required argument
         binding.recyclerView.adapter = adapter
-        viewModel.repositoryList.observe(this, Observer {
-            adapter.setRepositoriesList(it)
-            Log.d(TAG, it.toString())
-            Log.d(TAG, "how${adapter.repositories}")
-        })
+//        viewModel.repositoryList.observe(this, Observer {
+
+        setObserver(viewModel.repositoryList)
+
         getTrendingRepos()
         updateUIWithResponse()
         // retry button listener
@@ -65,6 +66,60 @@ class MainActivity : AppCompatActivity() {
         }
         // swipe refresh listener
         swipeRefreshLayout.setOnRefreshListener(refreshListener)
+
+        val optionsMenu = findViewById<TextView>(R.id.options_menu)
+        optionsMenu.setOnClickListener {
+            val popupMenu = PopupMenu(this,optionsMenu)
+            popupMenu.menuInflater.inflate(R.menu.custom_menu,popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_home -> {
+                        currentDisplay = "Home"
+                        Toast.makeText(
+                            this@MainActivity,
+                            "You Clicked : " + item.title,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        setObserver(viewModel.repositoryList)
+                    }
+                    R.id.action_header -> {
+                        currentDisplay = "Header"
+                        Toast.makeText(
+                            this@MainActivity,
+                            "You Clicked : " + item.title,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        setObserver(viewModel.repositoryListHeader)
+                    }
+                    R.id.action_stared -> {
+                        currentDisplay = "Stared"
+                        Toast.makeText(
+                            this@MainActivity,
+                            "You Clicked : " + item.title,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                true
+            }
+            popupMenu.show()
+        }
+    }
+
+    private fun setObserver(repositoryList: MutableLiveData<TrendingRepositories?>) {
+        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = layoutManager
+        // initialize the adapter,
+        // and pass the required argument
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.itemAnimator = null
+        repositoryList.observe(this, {
+            if (it != null) {
+                adapter.setRepositoriesList(it)
+            }
+            Log.d(TAG, it.toString())
+            Log.d(TAG, "how${adapter.repositories}")
+        })
     }
 
     private fun updateUIWithResponse(){
@@ -99,9 +154,13 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout.isRefreshing = true
         // call api to reload the screen
         binding.recyclerView.visibility = View.GONE
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.itemAnimator = null
         getTrendingRepos()
+        when(currentDisplay){
+            "Home" -> setObserver(viewModel.repositoryList)
+            else -> setObserver(viewModel.repositoryListHeader)
+        }
+        Log.d(TAG,"current $currentDisplay")
     }
 
     private fun getTrendingRepos(){
