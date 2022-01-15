@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Trending</string>
     <string name="options_symbol">⋮</string>
+    <string name="home">Home</string>
+    <string name="language_header">Language Header</string>
+    <string name="retry">RETRY</string>
+    <string name="error_image">Error Image</string>
 </resources>

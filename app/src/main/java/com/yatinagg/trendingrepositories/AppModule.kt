@@ -13,6 +13,6 @@ import javax.inject.Singleton
 class AppModule {
     @Provides
     @Singleton
-    fun provideSubmissionRepository(): MainRepository =
+    fun provideTrendingRepositoryRepository(): MainRepository =
         MainRepository(RetrofitService.getInstance())
 }

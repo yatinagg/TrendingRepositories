@@ -1,25 +1,31 @@
 package com.yatinagg.trendingrepositories.adapter
 
-import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.yatinagg.trendingrepositories.databinding.ListviewRepositoriesBinding
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.model.TrendingRepositoriesItem
-import java.lang.Exception
+import com.yatinagg.trendingrepositories.view.MainActivity
 
 class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 
-    var repositories = mutableListOf<TrendingRepositoriesItem>()
+    private var repositories = mutableListOf<TrendingRepositoriesItem>()
 
     fun setRepositoriesList(repositories: TrendingRepositories) {
-        this.repositories = repositories.toMutableList()
-        notifyItemRangeInserted(0,repositories.size)
+        if (repositories.size == 0 && MainActivity.firstTime && repositories.repos.isNotEmpty()) {
+            this.repositories = mutableListOf()
+            for (i in repositories.repos) {
+                this.repositories.add(i)
+            }
+            notifyItemRangeInserted(0, repositories.repos.size)
+        } else {
+            this.repositories = repositories
+            notifyItemRangeInserted(0, repositories.size)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
@@ -33,18 +39,19 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
         val repository = repositories[holder.adapterPosition]
         println("MainActivity 1 ${repository.username == null}   ${repository.username} now")
 
-        if(repository.username == null){
+        if (repository.username == null) {
             holder.setIsRecyclable(false)
             holder.binding.cardView.setCardBackgroundColor(Color.parseColor(repository.languageColor))
             holder.binding.repositoriesText.setBackgroundColor(Color.parseColor(repository.languageColor))
             holder.binding.repositoriesText.setTextColor(Color.parseColor("#FFFFFF"))
+            holder.binding.repositoriesDescription.visibility = View.GONE
+            holder.binding.repositoriesName.visibility = View.GONE
             val layoutParams = holder.binding.cardView.layoutParams
             layoutParams.height = 100
             holder.binding.ivAvatar.visibility = View.GONE
             holder.binding.repositoriesText.text = repository.language
             return
-        }
-        else {
+        } else {
             holder.binding.repositoriesText.text = repository.username
             holder.binding.repositoriesText.setBackgroundColor(Color.WHITE)
             holder.binding.repositoriesName.text = repository.repositoryName
@@ -84,6 +91,5 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
 }
 
 class MainViewHolder(val binding: ListviewRepositoriesBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-}
+    RecyclerView.ViewHolder(binding.root)
 

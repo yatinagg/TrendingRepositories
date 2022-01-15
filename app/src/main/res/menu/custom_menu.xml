@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_home"
-        android:title="Home"
-        app:showAsAction="never"/>
+        android:title="@string/home"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_header"
-        android:title="Language Header"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_stared"
-        android:title="Stared"
-        app:showAsAction="never"/>
+        android:title="@string/language_header"
+        app:showAsAction="never" />
+    <!--    <item-->
+    <!--        android:id="@+id/action_stared"-->
+    <!--        android:title="Stared"-->
+    <!--        app:showAsAction="never" />-->
 </menu>

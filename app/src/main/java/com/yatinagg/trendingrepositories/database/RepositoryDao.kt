@@ -1,7 +1,9 @@
 package com.yatinagg.trendingrepositories.database
 
-import androidx.room.*
-import com.yatinagg.trendingrepositories.model.TrendingRepositories
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.yatinagg.trendingrepositories.repository.LocalRepository
 
 @Dao

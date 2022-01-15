@@ -11,7 +11,7 @@ interface RetrofitService {
 
     companion object {
 
-        var retrofitService: RetrofitService? = null
+        private var retrofitService: RetrofitService? = null
 
         fun getInstance(): RetrofitService {
 

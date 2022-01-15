@@ -13,5 +13,5 @@ data class TrendingRepositoriesItem(
     val totalStars: Int? = null,
     val url: String? = null,
     val username: String? = null,
-    val stared: Boolean? = null
+    val stared: Boolean? = null,
 )

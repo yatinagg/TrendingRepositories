@@ -1,13 +1,14 @@
 package com.yatinagg.trendingrepositories.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +26,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
     private val adapter = RepositoryAdapter()
@@ -35,6 +35,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonRetry: Button
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var currentDisplay = "Home"
+
+    companion object {
+        var firstTime = true
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,12 +57,11 @@ class MainActivity : AppCompatActivity() {
         // initialize the adapter,
         // and pass the required argument
         binding.recyclerView.adapter = adapter
-//        viewModel.repositoryList.observe(this, Observer {
 
+        updateUIWithResponse()
         setObserver(viewModel.repositoryList)
 
         getTrendingRepos()
-        updateUIWithResponse()
         // retry button listener
         buttonRetry.setOnClickListener {
             binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -70,36 +73,21 @@ class MainActivity : AppCompatActivity() {
 
         val optionsMenu = findViewById<TextView>(R.id.options_menu)
         optionsMenu.setOnClickListener {
-            val popupMenu = PopupMenu(this,optionsMenu)
-            popupMenu.menuInflater.inflate(R.menu.custom_menu,popupMenu.menu)
+            val popupMenu = PopupMenu(this, optionsMenu)
+            popupMenu.menuInflater.inflate(R.menu.custom_menu, popupMenu.menu)
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_home -> {
                         currentDisplay = "Home"
-                        Toast.makeText(
-                            this@MainActivity,
-                            "You Clicked : " + item.title,
-                            Toast.LENGTH_SHORT
-                        ).show()
                         setObserver(viewModel.repositoryList)
                     }
                     R.id.action_header -> {
                         currentDisplay = "Header"
-                        Toast.makeText(
-                            this@MainActivity,
-                            "You Clicked : " + item.title,
-                            Toast.LENGTH_SHORT
-                        ).show()
                         setObserver(viewModel.repositoryListHeader)
                     }
-                    R.id.action_stared -> {
-                        currentDisplay = "Stared"
-                        Toast.makeText(
-                            this@MainActivity,
-                            "You Clicked : " + item.title,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+//                    R.id.action_stared -> {
+//                        currentDisplay = "Stared"
+//                    }
                 }
                 true
             }
@@ -118,14 +106,12 @@ class MainActivity : AppCompatActivity() {
             if (it != null) {
                 adapter.setRepositoriesList(it)
             }
-            Log.d(TAG, it.toString())
-            Log.d(TAG, "how${adapter.repositories}")
         })
     }
 
-    private fun updateUIWithResponse(){
+    private fun updateUIWithResponse() {
         viewModel.responseSuccessful.observe(this, {
-            when(it){
+            when (it) {
                 "success" -> {
                     binding.recyclerView.visibility = View.VISIBLE
                     mShimmerFrameLayout.visibility = View.GONE
@@ -133,13 +119,20 @@ class MainActivity : AppCompatActivity() {
                     vError.visibility = View.GONE
                     buttonRetry.visibility = View.GONE
                     swipeRefreshLayout.isRefreshing = false
+                    firstTime = false
                 }
                 "failure" -> {
-                    mShimmerFrameLayout.visibility = View.GONE
-                    ivError.visibility = View.VISIBLE
-                    vError.visibility = View.VISIBLE
-                    buttonRetry.visibility = View.VISIBLE
-                    swipeRefreshLayout.isRefreshing = false
+                    if (firstTime && viewModel.repositoryList.value?.repos?.size != 0) {
+                        binding.recyclerView.visibility = View.VISIBLE
+                        mShimmerFrameLayout.visibility = View.GONE
+                        firstTime = false
+                    } else {
+                        mShimmerFrameLayout.visibility = View.GONE
+                        ivError.visibility = View.VISIBLE
+                        vError.visibility = View.VISIBLE
+                        buttonRetry.visibility = View.VISIBLE
+                        swipeRefreshLayout.isRefreshing = false
+                    }
                 }
                 else -> {
                     mShimmerFrameLayout.visibility = View.VISIBLE
@@ -157,14 +150,13 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.visibility = View.GONE
         binding.recyclerView.itemAnimator = null
         getTrendingRepos()
-        when(currentDisplay){
+        when (currentDisplay) {
             "Home" -> setObserver(viewModel.repositoryList)
             else -> setObserver(viewModel.repositoryListHeader)
         }
-        Log.d(TAG,"current $currentDisplay")
     }
 
-    private fun getTrendingRepos(){
+    private fun getTrendingRepos() {
         val database = AppDatabase.getInstance(this)
         lifecycleScope.launch {
             viewModel.getTrendingRepos(database)
