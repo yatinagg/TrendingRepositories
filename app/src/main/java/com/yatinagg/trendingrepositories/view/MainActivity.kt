@@ -15,6 +15,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.yatinagg.trendingrepositories.R
 import com.yatinagg.trendingrepositories.adapter.RepositoryAdapter
+import com.yatinagg.trendingrepositories.database.AppDatabase
 import com.yatinagg.trendingrepositories.databinding.ActivityMainBinding
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.viewmodel.MainViewModel
@@ -123,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUIWithResponse(){
-        viewModel.responseSuccessful.observe(this, Observer {
+        viewModel.responseSuccessful.observe(this, {
             when(it){
                 "success" -> {
                     binding.recyclerView.visibility = View.VISIBLE
@@ -164,8 +165,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getTrendingRepos(){
+        val database = AppDatabase.getInstance(this)
         lifecycleScope.launch {
-            viewModel.getTrendingRepos()
+            viewModel.getTrendingRepos(database)
         }
     }
 

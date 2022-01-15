@@ -2,12 +2,14 @@ package com.yatinagg.trendingrepositories.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.yatinagg.trendingrepositories.database.AppDatabase
 import com.yatinagg.trendingrepositories.model.TrendingRepositories
 import com.yatinagg.trendingrepositories.model.TrendingRepositoriesItem
 import com.yatinagg.trendingrepositories.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,7 +25,12 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
     var repositoryMapList = HashMap<String,TrendingRepositories?>()
     val repositoryListHeader = MutableLiveData<TrendingRepositories?>()
 
-    suspend fun getTrendingRepos() {
+    suspend fun getTrendingRepos(database: AppDatabase) {
+
+
+        val trendingRepositories: TrendingRepositories = repository.getTrendingReposFromDB(database)
+        repositoryList.postValue(trendingRepositories)
+
         responseSuccessful.postValue("loading")
         coroutineScope {
             withContext(Dispatchers.IO) {
@@ -33,6 +40,18 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
                         call: Call<TrendingRepositories>,
                         response: Response<TrendingRepositories>
                     ) {
+                        Log.d("MainViewModel","response outside viewmodel insert ${response.body()}")
+                            viewModelScope.launch {
+                                if(response.body() != null) {
+                                    Log.d("MainViewModel","response insert ${response.body()}")
+                                    repository.insertSubmission(
+                                        response.body()!!,
+                                        database
+                                    )
+                                }
+                            }
+                        Log.d("MainViewModel","response after viewmodel insert ${response.body()}")
+
                         repositoryList.postValue(null)
                         repositoryMapList = HashMap()
                         repositoryList.postValue(response.body())
@@ -58,6 +77,8 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
                             }
                             Log.d(TAG, "check12w${repositoryMapList?.size}")
                         }
+
+                        Log.d("MainViewModel","response end viewmodel insert ${response.body()}")
                         val listHeader = TrendingRepositories()
                         for(i in repositoryMapList){
                             Log.d(TAG, "check123$ ${i.key}${repositoryMapList[i.key]!!.size}")

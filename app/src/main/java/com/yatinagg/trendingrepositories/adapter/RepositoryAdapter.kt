@@ -1,9 +1,11 @@
 package com.yatinagg.trendingrepositories.adapter
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import com.yatinagg.trendingrepositories.databinding.ListviewRepositoriesBinding
@@ -63,8 +65,10 @@ class RepositoryAdapter : RecyclerView.Adapter<MainViewHolder>() {
                     holder.binding.expandableLayout.visibility = View.GONE
             }
             Picasso.get().load(repository.builtBy?.get(0)?.avatar).into(holder.binding.ivAvatar)
+
         }
     }
+
 
     override fun getItemCount(): Int {
         return repositories.size

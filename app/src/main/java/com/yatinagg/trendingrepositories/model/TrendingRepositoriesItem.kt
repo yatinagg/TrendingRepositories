@@ -5,12 +5,13 @@ data class TrendingRepositoriesItem(
     val description: String? = null,
     val forks: Int? = null,
     val language: String? = null,
-    val languageColor: String,
+    val languageColor: String? = null,
     val rank: Int? = null,
     val repositoryName: String? = null,
     val since: String? = null,
     val starsSince: Int? = null,
     val totalStars: Int? = null,
     val url: String? = null,
-    val username: String? = null
+    val username: String? = null,
+    val stared: Boolean? = null
 )

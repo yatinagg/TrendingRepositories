@@ -1,3 +1,10 @@
 package com.yatinagg.trendingrepositories.model
 
-class TrendingRepositories : ArrayList<TrendingRepositoriesItem>()
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+data class TrendingRepositories(
+    var repos: List<TrendingRepositoriesItem> = arrayListOf()
+) : ArrayList<TrendingRepositoriesItem>()
